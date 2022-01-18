@@ -7,7 +7,7 @@ fn main() {
 
     let state = if let Ok(matches) = parse_opts(){
         InternalState{
-            time,
+            time: std::time::Duration::new(time as u64,0),
             suppress_notifications: matches.opt_present("s"),
             no_stdout: matches.opt_present("q"),
         }
@@ -73,7 +73,7 @@ All given times will be added together (i.e. 1m 17s = 77s)";
 
 
 /// gets time to run from opts excludes all args beginning with "-"
-fn get_time() -> usize {
+fn get_time() -> u64 {
     let mut total_time = 0;
 
     for o in std::env::args(){
@@ -94,7 +94,7 @@ fn get_time() -> usize {
 /// Input is formatted as `[DURATION][SUFFIX]`
 ///
 /// returns `Err(())` if improperly formatted
-fn parse_time(symbol: &str) -> Result<usize,()> {
+fn parse_time(symbol: &str) -> Result<u64,()> {
     static SUFFIXES: [TimeMultiplier;4] = [
         TimeMultiplier('s',0),
         TimeMultiplier('m',60),
@@ -102,7 +102,7 @@ fn parse_time(symbol: &str) -> Result<usize,()> {
         TimeMultiplier('d',60*60*24)
     ];
 
-    let mut num = symbol[..symbol.len()-1].parse::<usize>().unwrap();
+    let mut num = symbol[..symbol.len()-1].parse::<u64>().unwrap();
     let mut found_suffix = false;
 
     for t in &SUFFIXES{
@@ -123,4 +123,4 @@ fn parse_time(symbol: &str) -> Result<usize,()> {
 /// struct for parsing times
 /// `Self.0` is for the suffix character
 /// `Self.1` is for its multiplier
-struct TimeMultiplier(char,usize);
+struct TimeMultiplier(char,u64);
