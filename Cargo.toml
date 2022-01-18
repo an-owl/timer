@@ -1,0 +1,11 @@
+[package]
+name = "timer"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+scheduled-thread-pool = "0.2.5"
+notify-rust = "4.5.5"
+getopts = "0.2.21"
