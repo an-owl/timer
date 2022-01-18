@@ -7,7 +7,7 @@ fn main() {
 
     let state = if let Ok(matches) = parse_opts(){
         InternalState{
-            time: std::time::Duration::new(time as u64,0),
+            time: std::time::Duration::from_secs(time),
             suppress_notifications: matches.opt_present("s"),
             no_stdout: matches.opt_present("q"),
         }
@@ -76,7 +76,9 @@ All given times will be added together (i.e. 1m 17s = 77s)";
 fn get_time() -> u64 {
     let mut total_time = 0;
 
-    for o in std::env::args(){
+    for o in std::env::args().skip(1){
+
+        eprintln!("{}",o);
         if o.starts_with("-"){ continue }
         let time = parse_time(&*o);
 
@@ -102,22 +104,27 @@ fn parse_time(symbol: &str) -> Result<u64,()> {
         TimeMultiplier('d',60*60*24)
     ];
 
-    let mut num = symbol[..symbol.len()-1].parse::<u64>().unwrap();
-    let mut found_suffix = false;
 
-    for t in &SUFFIXES{
-        if t.0 == symbol.chars().last().unwrap(){
-            num *= t.1;
-            found_suffix = true;
-            break
+    if let Ok(mut num) = symbol[..symbol.len()-1].parse::<u64>() {
+        let mut found_suffix = false;
+
+        for t in &SUFFIXES {
+            if t.0 == symbol.chars().last().unwrap() {
+                num *= t.1;
+                found_suffix = true;
+                break
+            }
         }
-    }
 
-    if !found_suffix{
+        if !found_suffix {
+            return Err(())
+        }
+
+        Ok(num)
+    } else {
+        eprintln!("Failed to parse {} invalid argument", symbol);
         return Err(())
     }
-
-    Ok(num)
 }
 
 /// struct for parsing times
