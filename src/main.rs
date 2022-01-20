@@ -5,11 +5,13 @@ fn main() {
 
     let time = get_time();
     let state = if let Ok(matches) = parse_opts(){
-        InternalState{
+        let state1 = InternalState {
             time: std::time::Duration::from_secs(time),
             suppress_notifications: matches.opt_present("s"),
             no_stdout: matches.opt_present("q"),
-        }
+            ring_bell: matches.opt_present("b"),
+        };
+        state1
     } else {
         return
     };
@@ -52,6 +54,15 @@ All given times will be added together (i.e. 1m 17s = 77s)";
         "",
         HasArg::No,
         Occur::Optional,
+    );
+    opts.opt(
+        "b",
+        "bell",
+        "Send `bell` `\\a on exit",
+        "",
+        HasArg::No,
+        Occur::Optional
+
     );
     let parse = opts.parse(std::env::args());
     return if parse.is_err() {

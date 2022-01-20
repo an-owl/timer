@@ -11,6 +11,7 @@ pub struct InternalState{
     pub time: Duration,
     pub no_stdout: bool,
     pub suppress_notifications: bool,
+    pub ring_bell: bool,
 }
 
 
@@ -78,9 +79,22 @@ impl InternalState {
         write!(out, "{:0>2}:{:0>2}:{:0>2}",
                et.hour(),
                et.minute(),
-               et.minute()
+               et.second()
         ).unwrap();
         out
+    }
+
+    pub fn output_bell(){
+        use std::io::Write;
+        print!("\x07");
+        std::io::stdout().flush().unwrap();
+    }
+
+    pub fn declare_end(&self){
+        if !self.suppress_notifications{ self.notify_done() }
+        if !self.no_stdout{ self.notify_done_stdout() }
+        if self.ring_bell { Self::output_bell() }
+
     }
 }
 
@@ -106,8 +120,8 @@ pub fn timer_core(mut is: InternalState){
             break
         }
     }
-    if !is.suppress_notifications{ is.notify_done() }
-    if !is.no_stdout{ is.notify_done_stdout() }
+
+    is.declare_end();
 
 }
 
@@ -127,6 +141,7 @@ mod tests {
             time: Duration::from_secs(3666),
             no_stdout: false,
             suppress_notifications: false,
+            ring_bell: false
         };
         while data.time > Duration::from_secs(0){
             data.update_time()
