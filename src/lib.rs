@@ -16,7 +16,7 @@ pub struct InternalState{
 
 impl InternalState {
     /// updates and prints time
-    fn update_time(&mut self) {
+    pub fn update_time(&mut self) {
         //eprintln!("{}", self.time.as_secs());
         self.time -= Duration::from_secs(1);
         print!("\r{} ", //space at the end clears excess characters
@@ -27,12 +27,13 @@ impl InternalState {
     }
 
     /// returns true is `time` spans no Duration
-    fn is_done(&self) -> bool {
+    pub fn is_done(&self) -> bool {
         self.time.is_zero()
     }
 
     /// Creates and shows a system notification containing information that the timer has finished
-    fn notify_done(&self) {
+    /// Will print to stdout on failure to create notification
+    pub fn notify_done(&self) {
 
         use notify_rust::Notification;
         let mut summary_text: String = String::new();
@@ -50,12 +51,12 @@ impl InternalState {
     }
 
     /// Prints a message to stdout that the timer has finished
-    fn notify_done_stdout(&self) {
+    pub fn notify_done_stdout(&self) {
         println!("\rTimer completed at {}", Self::current_time());
     }
 
     /// Formats the currently stored time into "hh:mm:ss"
-    fn format_time(t: Duration) -> String {
+    pub fn format_time(t: Duration) -> String {
         let mut o = String::new();
 
         write!(o,
@@ -69,7 +70,7 @@ impl InternalState {
     }
 
     /// Formats the current system time into "hh:mm:ss"
-    fn current_time() -> String {
+    pub fn current_time() -> String {
 
         let mut out = String::new();
         let et = chrono::Local::now(); //end time
