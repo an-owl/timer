@@ -9,7 +9,6 @@ fn main() {
             time: std::time::Duration::from_secs(time),
             suppress_notifications: matches.opt_present("s"),
             no_stdout: matches.opt_present("q"),
-            initial_time: std::time::Duration::from_secs(time)
         }
     } else {
         return
