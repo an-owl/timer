@@ -11,7 +11,6 @@ pub struct InternalState{
     pub time: Duration,
     pub no_stdout: bool,
     pub suppress_notifications: bool,
-    pub initial_time: Duration,
 }
 
 
