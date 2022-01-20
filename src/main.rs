@@ -4,12 +4,12 @@ use timer::*;
 fn main() {
 
     let time = get_time();
-
     let state = if let Ok(matches) = parse_opts(){
         InternalState{
             time: std::time::Duration::from_secs(time),
             suppress_notifications: matches.opt_present("s"),
             no_stdout: matches.opt_present("q"),
+            initial_time: std::time::Duration::from_secs(time)
         }
     } else {
         return
@@ -78,14 +78,14 @@ fn get_time() -> u64 {
 
     for o in std::env::args().skip(1){
 
-        eprintln!("{}",o);
         if o.starts_with("-"){ continue }
         let time = parse_time(&*o);
 
         if time.is_err(){
             exit(1)
         } else {
-            total_time += time.unwrap()
+            total_time += time.unwrap();
+
         }
     }
     total_time
@@ -98,7 +98,7 @@ fn get_time() -> u64 {
 /// returns `Err(())` if improperly formatted
 fn parse_time(symbol: &str) -> Result<u64,()> {
     static SUFFIXES: [TimeMultiplier;4] = [
-        TimeMultiplier('s',0),
+        TimeMultiplier('s',1),
         TimeMultiplier('m',60),
         TimeMultiplier('h',60*60),
         TimeMultiplier('d',60*60*24)
@@ -119,7 +119,6 @@ fn parse_time(symbol: &str) -> Result<u64,()> {
         if !found_suffix {
             return Err(())
         }
-
         Ok(num)
     } else {
         eprintln!("Failed to parse {} invalid argument", symbol);

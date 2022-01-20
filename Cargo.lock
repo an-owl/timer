@@ -756,6 +756,7 @@ dependencies = [
 name = "timer"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "getopts",
  "notify-rust",
  "scheduled-thread-pool",
