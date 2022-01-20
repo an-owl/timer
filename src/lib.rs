@@ -19,6 +19,7 @@ impl InternalState {
     pub fn update_time(&mut self) {
         //eprintln!("{}", self.time.as_secs());
         self.time -= Duration::from_secs(1);
+        #[cfg(not(test))]
         print!("\r{} ", //space at the end clears excess characters
                  Self::format_time(self.time)
         );
@@ -108,5 +109,28 @@ pub fn timer_core(mut is: InternalState){
     if !is.suppress_notifications{ is.notify_done() }
     if !is.no_stdout{ is.notify_done_stdout() }
 
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::Duration;
+    use crate::InternalState;
+
+    #[test]
+    fn test_time_conversion(){
+        assert_eq!("01:01:06",InternalState::format_time(Duration::from_secs(3666)));
+    }
+
+    #[test]
+    fn test_time_dec(){
+        let mut data = InternalState{
+            time: Duration::from_secs(3666),
+            no_stdout: false,
+            suppress_notifications: false,
+        };
+        while data.time > Duration::from_secs(0){
+            data.update_time()
+        }
+    }
 }
 
