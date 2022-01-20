@@ -3,6 +3,8 @@ use std::sync::mpsc;
 use std::fmt::Write;
 use std::io::Stdout;
 use chrono::Timelike;
+use notify_rust::Timeout;
+
 #[derive(Clone,Copy)]
 /// Internal program state containing set options
 pub struct InternalState{
@@ -42,6 +44,7 @@ impl InternalState {
         if let Err(_) = Notification::new()
             .appname("Timer")
             .summary(&summary_text)
+            .timeout(Timeout::Never)
             .show(){
             self.notify_done_stdout();
         }
